@@ -1,0 +1,118 @@
+\documentclass[12pt,a4paper]{report}
+\usepackage{newtxmath,newtxtext}
+\usepackage[a4paper, nomarginpar, margin=1in]{geometry}
+\setlength{\parindent}{2em}
+\setlength{\parskip}{2pt}
+\usepackage{tikz,mathpazo}
+\usepackage{amsmath, mathtools, textcomp}
+\usetikzlibrary{shapes.geometric, shapes, arrows, snakes}
+\usepackage{graphicx}
+\usepackage{multirow}
+\begin{document}
+\tikzstyle{circle1} = [ellipse, rounded corners, minimum width=50pt, minimum height=23pt, text centered, draw=black, fill=white]
+\tikzstyle{rectangle1} = [rectangle, minimum width=70pt, minimum height=30pt,text centered, text width=50pt, draw=black, fill=white]
+\tikzstyle{diamond1} = [diamond, aspect=2, minimum width=60pt, minimum height=30pt,text centered, draw=black, fill=white]
+\tikzstyle{triangle1} = [regular polygon, regular polygon sides=3, text centered, draw=black, minimum size=10pt, fill=white]
+\newcommand{\tnode}[5]{
+  \node (#1) [#2, xshift=#4-0pt, yshift=#5-0pt] {\scriptsize #3};
+}
+\newcommand{\tnanode}[7]{
+  \node (#1) [#2, xshift=#4-0pt, yshift=#5-0pt, #6 of= #7] {\scriptsize #3};
+}
+\newcommand{\tline}[3]{
+  \draw [#3] (#1) -- (#2);
+}
+\newenvironment*{mypara}%
+{\noindent\ignorespaces}%
+{\par\noindent%
+  \ignorespacesafterend}
+
+\begin{mypara}
+  \textbf{1. ER Diagrams}
+  \par\noindent\ignorespaces
+\begin{tikzpicture}[node distance=65pt]
+  % client entity
+  \tnode {clients}{rectangle1}{Clients}{}{}
+  \tnanode {cid}{circle1}{\underline{c\_id}}{-15}{}{left}{clients}
+  \tnanode {pw}{circle1}{pw}{-21}{21}{below left}{clients}
+  \tnanode {firstname}{circle1}{first\_name}{-21}{-21}{above left}{clients}
+  \tnanode {lastname}{circle1}{last\_name}{8}{}{above left}{clients}
+  \tnanode {pnum}{circle1}{p\_num}{}{-2}{above}{clients}
+  \tnanode {cpnum}{circle1}{cp\_num}{-8}{}{above right}{clients}
+  \tnanode {email}{circle1}{email}{21}{-21}{above right}{clients}
+  \tnanode {level}{circle1}{level}{15}{}{right}{clients}
+  \tnanode {street}{circle1}{street}{8}{}{below left}{clients}
+  \tnanode {city}{circle1}{city}{-8}{}{below right}{clients}
+  \tnanode {state}{circle1}{state}{21}{21}{below right}{clients}
+  \tnanode {zipcode}{circle1}{zipcode}{15}{}{right}{clients}
+
+  \tline{clients}{cid}{}
+  \tline{clients}{pw}{}
+  \tline{clients}{firstname}{}
+  \tline{clients}{lastname}{}
+  \tline{clients}{pnum}{}
+  \tline{clients}{cpnum}{}
+  \tline{clients}{email}{}
+  \tline{clients}{level}{}
+
+  \tline{clients}{street}{}
+  \tline{clients}{city}{}
+  \tline{clients}{state}{}
+  \tline{clients}{zipcode}{}
+
+  % % addr_in relationship
+
+  % \tnanode {addrin}{diamond1}{Addr\_in}{}{20}{below}{clients}
+  % \tline{clients}{addrin}{ultra thick, ->}
+
+  % % addresses entity
+  % \tnanode {addresses}{rectangle1}{Addresses}{}{-10}{below}{addrin}
+  % \tnanode {aid}{circle1}{\underline{a\_id}}{-15}{}{left}{addresses}
+  % \tnanode {street}{circle1}{street}{-21}{-21}{above left}{addresses}
+  % \tnanode {city}{circle1}{city}{14}{}{above left}{addresses}
+  % \tnanode {state}{circle1}{state}{21}{-21}{above right}{addresses}
+  % \tnanode {zipcode}{circle1}{zipcode}{15}{}{right}{addresses}
+  % \tline{addresses}{aid}{}
+  % \tline{addresses}{street}{}
+  % \tline{addresses}{city}{}
+  % \tline{addresses}{state}{}
+  % \tline{addresses}{zipcode}{}
+  % \tline{addrin}{addresses}{ultra thick, <-}
+
+  % client_trans relationship
+
+  \tnanode {clienttrans}{diamond1}{Client\_trans}{}{-5}{below}{clients}
+  % \tline{35pt, -15pt}{184pt,-45pt}{}
+  \tline{clients}{clienttrans}{}
+
+
+  % transactions
+  \tnanode {transactions}{rectangle1}{Transactions}{}{-10}{below}{clienttrans}
+  \tnanode {tid}{circle1}{\underline{t\_id}}{-15}{}{left}{transactions}
+  \tnanode {value}{circle1}{value}{-21}{-21}{above left}{transactions}
+  \tnanode {tdate}{circle1}{t\_date}{5}{5}{above left}{transactions}
+  \tnanode {commission}{circle1}{commission}{-5}{5}{above right}{transactions}
+  \tnanode {balanceoil}{circle1}{balance\_oil}{21}{-21}{above right}{transactions}
+  \tnanode {balance}{circle1}{balance}{15}{}{right}{transactions}
+  \tline{transactions}{tid}{}
+  \tline{transactions}{value}{}
+  \tline{transactions}{tdate}{}
+  \tline{transactions}{commission}{}
+  \tline{transactions}{balanceoil}{}
+  \tline{transactions}{balance}{}
+  \tline{clienttrans}{transactions}{ultra thick, <-}
+
+  % isa payment
+  \tnanode {isa1}{triangle1}{ISA}{}{}{below}{transactions}
+  \tline{transactions}{isa1}{}
+
+  % payments
+  \tnanode {payments}{rectangle1}{Payments}{}{20}{below}{isa1}
+  \tnanode {amountpaid}{circle1}{amount\_paid}{-15}{}{left}{payments}
+  \tnanode {traderinfo}{circle1}{trader\_info}{15}{}{right}{payments}
+  \tline{payments}{amountpaid}{}
+  \tline{payments}{traderinfo}{}
+  \tline{isa1}{payments}{}
+\end{tikzpicture}
+\end{mypara}
+\end{document}
