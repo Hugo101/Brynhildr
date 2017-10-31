@@ -5,6 +5,7 @@ A repository for team project of CS6360
 * project_report.pdf: ER Diagrams for project requirement 1.
 * project_report.tex: ER Diagrams source file.
 * sqls.txt: Sqls for project requirement 2.
+* dump.sql: Test data of this project.
 * Brynhildr: Web App Root Dir.
 
 ## Application Structure (Undetermined)
