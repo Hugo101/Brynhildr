@@ -12,6 +12,8 @@ CREATE TABLE CLIENTS(
         EMAIL VARCHAR(100),
         ZIPCODE CHAR(5),
         STATE VARCHAR(20),
+        CITY VARCHAR(30),
+        STREET VARCHAR(50),
         PRIMARY KEY (C_ID),
         UNIQUE (P_NUM),
         UNIQUE (CP_NUM),
