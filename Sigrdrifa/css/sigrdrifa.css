@@ -1,0 +1,48 @@
+/* background */
+html, body {
+    background-image: url("../imgs/Background-Iceland-Wallpaper-1.jpg");
+    height: 100%;
+    background-repeat: no-repeat;
+}
+
+/* make div container full */
+.fill {
+    min-height: 100%;
+    height: 100%;
+    min-width: 100%;
+    width: 100%;
+}
+
+/* make div col vertical center */
+.vcenter{
+    display: flex;
+    margin: auto;
+    alignl-items: center;
+}
+
+/* make h1 content text center */
+.tcenter{
+    text-align: center;
+}
+
+/* transparent extent for navbar */
+.navbar-transparent {
+    filter:alpha(opacity=30);
+    -moz-opacity:0.3;
+    -khtml-opacity: 0.3;
+    opacity: 0.3;
+    /* display:none; */
+}
+
+/* transparent extent for listgroup */
+.list-group-transparent {
+    filter:alpha(opacity=70);
+    -moz-opacity:0.7;
+    -khtml-opacity: 0.7;
+    opacity: 0.7;
+}
+
+/* row padding top */
+.row-padding-top {
+    padding-top: 30px;
+}

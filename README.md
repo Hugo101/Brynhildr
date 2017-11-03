@@ -7,9 +7,21 @@ A repository for team project of CS6360
 * sqls.txt: Sqls for project requirement 2.
 * dump.sql: Test data of this project.
 * Brynhildr: Web App Root Dir.
+* Sigrdrifa: Frontend Root Dir.
 
 ## Application Structure (Undetermined)
 * Database: Mysql (Requirement of Project)
 * Backend: Flask, Restful API, Python3
-* Frontend: Bootstrap, AngularJS
+* Frontend: Bootstrap, jQuery
+
+## Front End
+Use only bootstrap and jQuery for development
+
+## Back End
+Use some extension of Flask for development, includes:
+
+* Flask-Restful
+* Flask-HttpAuth
+* Flask-MySQLdb
+* Flask-cors
 
