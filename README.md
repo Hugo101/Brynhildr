@@ -25,3 +25,6 @@ Use some extension of Flask for development, includes:
 * Flask-MySQLdb
 * Flask-cors
 
+## Deploy Manual
+
+Install Python 3.6.3 at first.
