@@ -4,8 +4,8 @@ itsdangerous==0.24
 Jinja2==2.9.6
 MarkupSafe==1.0
 Werkzeug==0.12.2
-Jsonify
-Flask_restful
-Flask_httpauth
-Flash_cors
-Flask_mysqldb
+Jsonify==0.5
+Flask_RESTful==0.3.6
+Flask_httpauth==3.2.3
+Flash_Cors==3.0.3
+Flask_MySQLdb==0.2.0
