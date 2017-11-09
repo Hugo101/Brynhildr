@@ -1,3 +1,4 @@
+pip install -r requirements.txt
 cd Brynhildr
 start /b cmd /c call "python.exe" "run.py" > "..\brynhildr_run.log" 2>"..\brynhildr_error.log"
 echo "Backend started"
