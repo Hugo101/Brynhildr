@@ -27,4 +27,7 @@ Use some extension of Flask for development, includes:
 
 ## Deploy Manual
 
-Install Python 3.6.3 at first.
+Require Python 3.6.3 installed
+
+* Unix&Linux: ```runserver.sh```
+* Windows:    ```./runserver.bat```
