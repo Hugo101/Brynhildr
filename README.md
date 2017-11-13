@@ -23,11 +23,12 @@ Use some extension of Flask for development, includes:
 * Flask-Restful
 * Flask-HttpAuth
 * Flask-MySQLdb
-* Flask-cors
+* Flask-Cors
 
 ## Deploy Manual
 
 Require Python 3.6.3 installed
 
 * Unix&Linux: ```runserver.sh```
-* Windows:    ```./runserver.bat```
+* Windows:    ```checkpython.bat
+runserver.bat```

@@ -46,3 +46,8 @@ html, body {
 .row-padding-top {
     padding-top: 30px;
 }
+
+/* hidden class */
+.hiddencls {
+    display: none;
+}

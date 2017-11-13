@@ -7,6 +7,14 @@ restful_urls['transactions'] = server_host + '/transactions';
 var client = {};
 var transactions = {};
 
+// logout function
+// empty cookie
+function logout(){
+  console.log("logout");
+  Cookies.remove("token");
+  location.reload();
+}
+
 function is_login(){
   $.ajax({
     url: restful_urls['clients'],
@@ -89,6 +97,7 @@ function signin(){
 }
 
 function core_onload(){
+  $(".glyphicon-log-out").parent().show();
   $("#id_welcome").text('Welcome ' + client.first_name + ' ' + client.last_name);
   $("#h6_first_name").text(client.first_name);
   for(var attr in client){
@@ -99,6 +108,9 @@ function core_onload(){
 }
 
 $(document).ready(function(){
+  $(".glyphicon-log-out").parent().click(function(){
+    logout();
+  });
   if(Cookies.get('token')!==null && Cookies.get('token')!==undefined){
     is_login();
   }else{
