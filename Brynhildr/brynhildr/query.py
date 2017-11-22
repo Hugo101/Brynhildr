@@ -1,20 +1,8 @@
 # Class Query for Brynhildr
+from .brynhildr import mysql
 
-class Query(object):
-    def __init__(self, operation, relation, attributes=None,
-                 conditions=None):
-        self.operation = operation
-        self.relation = relation
-        self.attributes = ','.join(["{}.{}".format(
-            self.relation,
-            attr) for attr in attributes]) if attributes is not None else '*'
-        self.conditions = ('WHERE ' + conditions) if conditions is not None and conditions != '' else ''
-        self.sql = '''{} {} FROM {} {};'''.format(
-            self.operation,
-            self.attributes,
-            self.relation,
-            self.conditions
-        )
+users_table_name = 'users'
 
-    def set_query(self, sql):
-        self.sql = sql
+class Queries(object):
+    '''pre define queries'''
+    query_user_by_email = 'select uid, email, password, type from ' + users_table_name + ' where email = %s'

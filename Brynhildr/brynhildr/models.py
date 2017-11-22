@@ -1,8 +1,54 @@
 # models in Brynhildr
-from .query import Query
+from .query import Queries
 from .brynhildr import mysql, app
 from datetime import date
-import hashlib
+from .utils import parse_emailaddr
+
+class User(object):
+    '''model for User'''
+    attributes = {}
+    attributes['uid']= None
+    attributes['email'] = None
+    attributes['pw'] = None
+    attributes['type'] = None # Type 0:client, 1:trader, 2:manager
+    def __init__(self, args):
+        '''construct function'''
+        self.attributes['uid']= args['uid']
+        self.attributes['pw'] = args['pw']
+        self.attributes['email'] = args['email']
+        self.attributes['type'] = args['type']
+
+    def verify_password(self, password):
+        '''verify password'''
+        return self.attributes['pw'] == password
+
+    @staticmethod
+    def fetch(args):
+        '''fetch user by given args'''
+        app.logger.debug(args)
+        sql = None
+        for attr in args:
+            if attr == 'email':
+                emailaddr = parse_emailaddr(args['email'])
+                if emailaddr is not None:
+                    sql = Queries.query_user_by_email
+        cur = mysql.connection.cursor()
+        app.logger.debug(sql)
+        if sql is None:
+            return None
+        cur.execute(sql, (emailaddr, ))
+        results = cur.fetchall()
+        app.logger.debug(results)
+        json = []
+        for row in results:
+            dict1 = {}
+            i = 0
+            for attr in User.attributes:
+                dict1[attr] = row[i]
+                i = i + 1
+            json.append(dict1)
+        return json
+
 
 class Client(object):
     ''' model for Client'''

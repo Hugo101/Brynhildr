@@ -2,8 +2,8 @@ from flask import g
 #from .models import Client
 from .brynhildr import auth, jwt, app
 
-def generate_token(c_id):
-    token = jwt.dumps({'cid': c_id})
+def generate_token(uid):
+    token = jwt.dumps({'uid': uid})
     return token
 
 @auth.verify_token
@@ -14,7 +14,7 @@ def verify_token(token):
         tokens = jwt.loads(str(token))
     except Exception:
         return False
-    if 'cid' in tokens:
-        g.id = tokens['cid']
+    if 'uid' in tokens:
+        g.id = tokens['uid']
         return True
     return False

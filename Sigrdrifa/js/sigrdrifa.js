@@ -87,9 +87,9 @@ function signin(){
   }).then(function(data){
     console.log(data);
     var data = $.parseJSON(data);
-    Cookies.set("c_id", data.c_id);
+    Cookies.set("uid", data.uid);
     Cookies.set("token", data.token);
-    console.log(Cookies.get("c_id"));
+    console.log(Cookies.get("uid"));
     location.reload();
   }, function(){
     alert('Service not available');
@@ -114,6 +114,6 @@ $(document).ready(function(){
   if(Cookies.get('token')!==null && Cookies.get('token')!==undefined){
     is_login();
   }else{
-    $(".container").load("htmls/login.html", function(){$('.btn').click(function(){signin();})});
+    $(".container").load("htmls/login.html", function(){$('.btn').click(function(event){event.preventDefault();signin();})});
   }
 });
