@@ -82,7 +82,7 @@ function signin(){
     method: 'POST',
     data: {
       'email': $("#id_email").val(),
-      'password': $("#id_password").val(),
+      'password': md5($("#id_password").val()),
     },
   }).then(function(data){
     console.log(data);

@@ -21,7 +21,7 @@
 
 LOCK TABLES `CLIENTS` WRITE;
 /*!40000 ALTER TABLE `CLIENTS` DISABLE KEYS */;
-INSERT INTO `CLIENTS` VALUES (1,'111111','Judy','Lu','6789695577',NULL,'1@2.3','99999','BR','Baltimore','Round Table'),(2,'222222','Altria','Pendragon','',NULL,'altria@gmail.com','00000','BR','LONDON','ROUND');
+INSERT INTO `CLIENTS` VALUES (1,'96e79218965eb72c92a549dd5a330112','Judy','Lu','6789695577',NULL,'1@2.3','99999','BR','Baltimore','Round Table'),(2,'e3ceb5881a0a1fdaad01296d7554868d','Altria','Pendragon','',NULL,'altria@gmail.com','00000','BR','LONDON','ROUND');
 /*!40000 ALTER TABLE `CLIENTS` ENABLE KEYS */;
 UNLOCK TABLES;
 

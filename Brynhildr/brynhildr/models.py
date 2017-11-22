@@ -2,6 +2,7 @@
 from .query import Query
 from .brynhildr import mysql, app
 from datetime import date
+import hashlib
 
 class Client(object):
     ''' model for Client'''
