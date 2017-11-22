@@ -15,7 +15,8 @@ A repository for team project of CS6360
 * Frontend: Bootstrap, jQuery
 
 ## Front End
-Use only bootstrap and jQuery for development
+Use bootstrap and jQuery for development
+Use blueimp's JavaScript-MD5 for frontend encryption: https://github.com/blueimp/JavaScript-MD5
 
 ## Back End
 Use some extension of Flask for development, includes:
