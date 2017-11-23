@@ -2,22 +2,70 @@
 var server_host = 'http://127.0.0.1:5000/api';
 var restful_urls = [];
 restful_urls['login'] = server_host + '/login';
-restful_urls['clients'] = server_host + '/clients';
+restful_urls['client'] = server_host + '/client';
+restful_urls['user'] = server_host + '/user';
 restful_urls['transactions'] = server_host + '/transactions';
+var user = {};
 var client = {};
 var transactions = {};
+var current_price = 35;
+var rate = [0.002,0.015];
 
-// logout function
-// empty cookie
-function logout(){
-  console.log("logout");
-  Cookies.remove("token");
-  location.reload();
+// waif function
+function wait(ms){
+  var date = new Date(); // create new date object
+  while(new Date().getTime() - date.getTime() < ms){}; // now() - begin time < wait interval
 }
 
+
+// load core htmls depends on user type
+function load_core_htmls(){
+  switch(user['type'])
+  {
+    case 0:
+    get_client();
+    break;
+    case 1:
+    break;
+    case 2:
+    break;
+    default:
+    break;
+  }
+}
+
+// check if current user has already signed in
 function is_login(){
   $.ajax({
-    url: restful_urls['clients'],
+    url: restful_urls['user'],
+    /* safari support*/
+    cache: true,
+    async: false,
+    method: 'GET',
+    // headers: {
+    //   'Authorization': 'Iceland ' + Cookies.get('token'),
+    // },
+    beforeSend : function( xhr ) {
+      xhr.setRequestHeader( 'Authorization', 'Iceland ' + Cookies.get('token') );
+    },
+  }).then(function(data){
+    console.log(data);
+    var data = $.parseJSON(data);
+    console.log(data);
+    for(var cld in data[0]){
+      user[cld] = data[0][cld];
+    }
+    load_core_htmls();
+  }, function(){
+    Cookies.remove("token");
+    $(".container").load("htmls/login.html", function(){$('.btn').click(function(){signin();})});
+  });
+}
+
+/* get client info */
+function get_client(){
+  $.ajax({
+    url: restful_urls['client'],
     /* safari support*/
     cache: true,
     async: false,
@@ -35,8 +83,8 @@ function is_login(){
     for(var cld in data[0]){
       client[cld] = data[0][cld];
     }
-    $(".container").load("htmls/core.html",
-                         function(){core_onload();});
+    $(".container").load("htmls/core_client.html",
+                         function(){core_client_onload();});
   }, function(){
     Cookies.remove("token");
     $(".container").load("htmls/login.html", function(){$('.btn').click(function(){signin();})});
@@ -47,8 +95,18 @@ function is_login(){
 function load_transactions(){
   console.log(transactions);
   for(var idx in transactions){
-    var dom_content = "<a href='#' class='list-group-item list-group-item-light flex-column align-items'><div class='d-flex w-100 justify-content-between'><h6 class='mb-1'>" + JSON.stringify(transactions[idx]) + "</h6></div></a>";
-    $(".list-group#id_transactions").append(dom_content);
+    var dom_content = "<tr>";
+    dom_content += '<th>' + transactions[idx]['t_id'] + '</th>';
+    dom_content += '<td>' + transactions[idx]['t_date'] + '</td>';
+    dom_content += '<td>' + transactions[idx]['amount'] + '</td>';
+    dom_content += '<td>' + transactions[idx]['comm_rate'] + '</td>';
+    dom_content += '<td>' + transactions[idx]['price'] + '</td>';
+    dom_content += '<td>' + transactions[idx]['comm_oil'] + '</td>';
+    dom_content += '<td>' + transactions[idx]['comm_cash'] + '</td>';
+    dom_content += '<td>' + transactions[idx]['oil_balan'] + '</td>';
+    dom_content += '<td>' + transactions[idx]['cash_balan'] + '</td>';
+    dom_content += '</tr>'
+    $(".table#id_transactions tbody").append(dom_content);
   }
 }
 
@@ -72,40 +130,35 @@ function get_transactions(){
   });
 }
 
-function signin(){
-  console.log('click');
+/* new transaction */
+function new_transaction(t_data){
   $.ajax({
-    url: restful_urls['login'],
-    /* safari */
+    url: restful_urls['transactions'],
+    /* safari support*/
     cache: true,
-    //async: false,
-    method: 'POST',
+    async: false,
+    method: 'PUT',
+    // headers: {
+    //   'Authorization': 'Iceland ' + Cookies.get('token'),
+    // },
     data: {
-      'email': $("#id_email").val(),
-      'password': md5($("#id_password").val()),
+      't_type': t_data['t_type'],
+      'comm_type': t_data['comm_type'],
+      'amount': t_data['amount'],
+      'c_id': t_data['c_id'],
+    },
+    beforeSend : function( xhr ) {
+      xhr.setRequestHeader( 'Authorization', 'Iceland ' + Cookies.get('token') );
     },
   }).then(function(data){
     console.log(data);
     var data = $.parseJSON(data);
-    Cookies.set("uid", data.uid);
-    Cookies.set("token", data.token);
-    console.log(Cookies.get("uid"));
-    location.reload();
-  }, function(){
-    alert('Service not available');
+    console.log(data);
+  }, function(e){
+    console.log(e);
   });
 }
 
-function core_onload(){
-  $(".glyphicon-log-out").parent().show();
-  $("#id_welcome").text('Welcome ' + client.first_name + ' ' + client.last_name);
-  $("#h6_first_name").text(client.first_name);
-  for(var attr in client){
-    var dom_content = "<a href='#' class='list-group-item list-group-item-light flex-column align-items'><div class='d-flex w-100 justify-content-between'><h6 class='mb-1'>" + attr.toUpperCase() + ":</h6><h6 class='mb-1' id='h6_" + attr + "'>" + client[attr] + "</h6></div></a>";
-    $(".list-group#id_clientinfo").append(dom_content);
-  }
-  get_transactions();
-}
 
 $(document).ready(function(){
   $(".glyphicon-log-out").parent().click(function(){

@@ -1,0 +1,125 @@
+<div class="row justify-content-md-center fill core">
+  <div class="col-md-2 float-left">
+    <div class="row row-padding-top">
+    </div>
+    <div class="row">
+      <div class="list-group list-group-transparent" id="id_clientinfo">
+        <a href="#" class="list-group-item list-group-item-light flex-column align-items-start">
+          <div class="d-flex w-100 justify-content-between">
+            <h5 class="mb-1">Client Info</h5>
+          </div>
+        </a>
+      </div>
+    </div>
+  </div>
+  <!--Body content-->
+  <div class="col-md-8 vcenter justify-content-md-center">
+    <div class="row justify-content-md-center">
+      <div class="col-md-12">
+        <h1 class="tcenter" id="id_welcome">Welcome</h1>
+      </div>
+      <div class="row">
+      </div>
+      <div class="col-md-12">
+        <div class="d-flex w-100 justify-content-between">
+          <div class="col-md-7"></div>
+          <h5 class="mb-1 tcenter float-right">Recent Transcations</h5>
+        </div>
+        <table class="table table-transparent table-info" id="id_transactions">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>DateTime</th>
+              <th>AMT</th>
+              <th>C_Rate</th>
+              <th>Price</th>
+              <th>C_Oil</th>
+              <th>C_Cash</th>
+              <th>B_Oil</th>
+              <th>B_Cash</th>
+            </tr>
+          </thead>
+          <tbody>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+  <!-- right button list -->
+  <div class="col-md-2 float-right vcenter justify-content-between">
+    <div class="row">
+      <div class="col-md-12">
+        <button type="button" class="btn btn-secondary btn-md" id="newtransaction" data-toggle="modal" data-target="#new_transaction_modal">New Transaction</button>
+      </div>
+      <div class="col-md-12">
+        <hr>
+      </div>
+      <div class="col-md-12">
+        <button type="button" class="btn btn-secondary btn-md" id="newpayment">&nbsp New &nbsp Payment&nbsp</button>
+      </div>
+    </div>
+  </div>
+
+
+
+
+  <!-- Modals -->
+  <!-- Modal for new oil transaction -->
+  <div class="modal fade" id="new_transaction_modal" tabindex="-1" role="dialog" aria-labelledby="new_modal_label" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header"> <!-- header  title-->
+          <h5 class="modal-title" id="new_transaction_modal_label">New Transaction</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <form>
+            <div class="form-group form-inline" id="transaction_type">
+              <label for="transaction_type_options" class="col-md-5 form-control-label">Transaction Type:</label>
+              <div class="form-check form-check-inline">
+                <label class="form-check-label">
+                  <input class="form-check-input" type="radio" name="transaction_type_options" id="transaction_type_buy" value="0">Buy
+                </label>
+              </div>
+              <div class="form-check form-check-inline">
+                <label class="form-check-label">
+                  <input class="form-check-input" type="radio" name="transaction_type_options" id="transaction_type_sell" value="1">Sell
+                </label>
+              </div>
+            </div>
+            <div class="form-group form-inline">
+              <label for="transaction_amount" class="col-md-5 form-control-label">Amount oil in barrels:</label>
+              <input type="number" class="col-md-4 form-control" id="transaction_amount" placeholder="Oil Amount" min="0">
+              <label for="transaction_amount_value" class="col-md-3 form-control-label"></label>
+            </div>
+            <div class="form-group form-inline">
+              <label for="commission_options" class="col-md-5 form-control-label">Pay Commission By:</label>
+              <div class="form-check form-check-inline">
+                <label class="form-check-label">
+                  <input class="form-check-input" type="radio" name="commission_options" id="commission_by_oil" value="0">Oil
+                </label>
+              </div>
+              <div class="form-check form-check-inline">
+                <label class="form-check-label">
+                  <input class="form-check-input" type="radio" name="commission_options" id="commission_by_cash" value="1">Cash
+                </label>
+              </div>
+            </div>
+            <div class="alert alert-dismissable">
+            </div>
+            <div class="alert alert-dismissable">
+            </div>
+            <div class="alert alert-dismissable">
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-primary">Submit</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

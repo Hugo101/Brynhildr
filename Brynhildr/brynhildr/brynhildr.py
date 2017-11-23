@@ -26,6 +26,14 @@ auth = HTTPTokenAuth('Iceland')
 from . import views
 app.add_url_rule('/', view_func=views.main)
 from . import resources
-api.add_resource(resources.Clients , '/api/clients', endpoint='clients')
+
+# get client by id
+api.add_resource(resources.Client , '/api/client', endpoint='client')
+# get user by id
+api.add_resource(resources.User , '/api/user', endpoint='user')
+# get transactions
 api.add_resource(resources.Transactions , '/api/transactions', endpoint='transactions')
+# login
 api.add_resource(resources.Login , '/api/login', endpoint='login')
+# all clients api
+api.add_resource(resources.Clients , '/api/clients', endpoint='clients')

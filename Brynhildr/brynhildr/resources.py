@@ -1,7 +1,9 @@
 # resources for Brynhildr
 from flask import g
 from flask_restful import reqparse, abort, Resource
-from .models import Client, Transaction, User
+from .models import Client as mClient
+from .models import Transaction as mTransaction
+from .models import User as mUser
 from .brynhildr import api, app, auth
 from .auth import generate_token
 import json, jsonify
@@ -24,17 +26,51 @@ class Transactions(Resource):
         parser.add_argument('t_id', type=int)
         args = parser.parse_args(strict=True)
         args['uid'] = g.id
-        return json.dumps(Transaction.fetch(args))
+        return json.dumps(mTransaction.fetch(args))
+
+    @auth.login_required
+    def put(self):
+        parser = reqparse.RequestParser()
+        parser.add_argument('amount', type=int)
+        parser.add_argument('comm_type', type=int)
+        parser.add_argument('t_type', type=int)
+        parser.add_argument('c_id', type=int)
+        args = parser.parse_args(strict=True)
+        args['uid'] = g.id
+        return json.dumps(mTransaction.new(args))
+
+
 
 class Clients(Resource):
+    '''test resource, get all clients'''
+    def get(self):
+        return json.dumps(mClient.fetchall())
+
+
+class Client(Resource):
     @auth.login_required
     def get(self):
         parser = reqparse.RequestParser()
         parser.add_argument('uid', type=int)
         args = parser.parse_args(strict=True)
         app.logger.debug(g.id)
+        if args['uid'] is None:
+            args['uid'] = g.id
+        return json.dumps(mClient.fetch(args))
+
+
+class User(Resource):
+    @auth.login_required
+    def get(self):
+        parser = reqparse.RequestParser()
+        args = parser.parse_args(strict=True)
+        app.logger.debug(g.id)
         args['uid'] = g.id
-        return json.dumps(Client.fetch(args))
+        result = mUser.fetch(args)
+        for u in result:
+            u.pop('pw')
+        return json.dumps(result)
+
 
 class Login(Resource):
     def post(self):
@@ -42,11 +78,11 @@ class Login(Resource):
         parser.add_argument('email', type=str)
         parser.add_argument('password', type=str)
         args = parser.parse_args(strict=True)
-        user = User.fetch({'email': args['email']})
+        user = mUser.fetch({'email': args['email']})
         app.logger.debug(user)
         if len(user) == 0:
             return json.dumps(errors['user_not_exists'])
-        g.user = User(user[0])
+        g.user = mUser(user[0])
         if g.user.verify_password(args['password']):
             token = generate_token(g.user.attributes['uid'])
             app.logger.debug(token)
