@@ -24,8 +24,10 @@ class Transactions(Resource):
     def get(self):
         parser = reqparse.RequestParser()
         parser.add_argument('t_id', type=int)
+        parser.add_argument('uid', type=int)
         args = parser.parse_args(strict=True)
-        args['uid'] = g.id
+        if args['uid'] != g.id:
+            args['tr_id'] = g.id
         return json.dumps(mTransaction.fetch(args))
 
     @auth.login_required
@@ -36,6 +38,8 @@ class Transactions(Resource):
         parser.add_argument('t_type', type=int)
         parser.add_argument('c_id', type=int)
         args = parser.parse_args(strict=True)
+        if args['comm_type'] == -1:
+            args['comm_type'] = None
         args['uid'] = g.id
         return json.dumps(mTransaction.new(args))
 
@@ -43,6 +47,7 @@ class Transactions(Resource):
 
 class Clients(Resource):
     '''test resource, get all clients'''
+    @auth.login_required
     def get(self):
         return json.dumps(mClient.fetchall())
 

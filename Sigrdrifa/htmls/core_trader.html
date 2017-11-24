@@ -4,9 +4,9 @@
     </div>
     <div class="row">
       <div class="list-group list-group-transparent" id="id_clientinfo">
-        <div class="list-group-item list-group-item-light flex-column align-items-start">
+        <div class="list-group-item list-group-item-dark flex-column align-items-start">
           <div class="d-flex w-100 justify-content-between">
-            <h5 class="mb-1">Client Info</h5>
+            <h5 class="mb-1">Chosen Client Info</h5>
           </div>
         </div>
       </div>
@@ -66,8 +66,8 @@
     </div>
   </div>
   <!-- right button list -->
-  <div class="col-md-2 float-right vcenter justify-content-between">
-    <div class="row">
+  <div class="col-md-2 float-right justify-content-between">
+    <div class="row row-padding-top">
       <div class="col-md-12">
         <button type="button" class="btn btn-secondary btn-md" id="newtransaction" data-toggle="modal" data-target="#new_transaction_modal">New Transaction</button>
       </div>
@@ -77,11 +77,25 @@
       <div class="col-md-12">
         <button type="button" class="btn btn-secondary btn-md" id="newpayment" data-toggle="modal" data-target="#new_payment_modal">&nbsp New &nbsp Payment&nbsp</button>
       </div>
+      <div class="col-md-12">
+        <hr>
+      </div>
+      <div class="col-md-12 list-group list-group-dark list-group-transparent">
+        <div class="list-group-item list-group-item-dark flex-column">
+          <div class="d-flex w-100 justify-content-between">
+            <h5 class="mb-1">Client List</h5>
+          </div>
+        </div>
+        <div class="list-group-item list-group-item-info flex-column">
+          <div class="d-flex w-100 justify-content-between">
+            <input type="text" id="search_client" placeholder="search by name">
+          </div>
+        </div>
+      </div>
+      <div class="col-md-12 list-group list-group-dark list-group-transparent pre-scrollable" id="id_clientlist">
+      </div>
     </div>
   </div>
-
-
-
 
   <!-- Modals -->
   <!-- Modal for new oil transaction -->

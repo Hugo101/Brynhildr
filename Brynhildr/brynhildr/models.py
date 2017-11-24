@@ -95,17 +95,28 @@ class Client(object):
     @staticmethod
     def fetchall():
         cur = mysql.connection.cursor()
-        cur.execute(Queries.query_client_all)
-        results = cur.fetchall()
-        json = []
-        for row in results:
-            dict1 = {}
-            i = 0
-            for attr in Client.attributes:
-                dict1[attr] = row[i]
-                i = i + 1
-            json.append(dict1)
-        return json
+        ret = 0
+        cur.callproc('searchtrader',(g.id, ret,))
+        cur.execute('select @_searchtrader_1;')
+        ret = cur.fetchall()[0][0]
+        # only trader could request all clients information
+        if ret != 0:
+            cur.execute(Queries.query_client_all)
+            results = cur.fetchall()
+            json = []
+            for row in results:
+                row = list(row)
+                dict1 = {}
+                i = 0
+                for attr in Client.attributes:
+                    if isinstance(row[i], Decimal):
+                        row[i] = float(row[i])
+                    dict1[attr] = row[i]
+                    i = i + 1
+                json.append(dict1)
+            return json
+        else:
+            return {'error': 'Insufficient authority'}
 
     @staticmethod
     def fetch(args):
@@ -153,6 +164,15 @@ class Transaction(object):
                 # check uid is a valid Integer, sql injection prevention
                 uid = parse_int(args['uid'])
                 if uid is not None:
+                    tr_id = args.get('tr_id')
+                    if tr_id is not None:
+                        cur = mysql.connection.cursor()
+                        ret = 0
+                        cur.callproc('searchtrader',(g.id, ret,))
+                        cur.execute('select @_searchtrader_1;')
+                        ret = cur.fetchall()[0][0]
+                        if ret == 0:
+                            return {'error': 'Insufficient authority'}
                     users = User.fetch(args)
                     if users is not None:
                         g.user = User(users[0])
@@ -169,8 +189,10 @@ class Transaction(object):
         t_type = parse_int(args['t_type'])
         c_id = parse_int(args['c_id'])
         tr_id = parse_int(args['uid'])
-        if amount is None or comm_type is None or t_type is None or c_id is None or tr_id is None:
-            return None
+        if amount is None or t_type is None or c_id is None or tr_id is None:
+            return {'error': 'Incorrect Arguments'}
+        if comm_type is None and t_type != 2:
+            return {'error': 'Incorrect Arguments'}
         if tr_id == c_id:
             tr_id = None
         cur = mysql.connection.cursor()
@@ -179,13 +201,26 @@ class Transaction(object):
             # call buyoilproc procedure to add new oil transaction
             ret = cur.callproc('buyoilproc', (amount, c_id, tr_id, comm_type, ret))
             cur.execute('select @_buyoilproc_4;')
-            ret = cur.fetchall()
-            app.logger.debug(ret)
-            mysql.connection.commit()
-            if ret is not None:
-                return {'t_id': ret}
-            else:
-                return {'error': 'failed to create new transaction'}
+            ret = cur.fetchall()[0][0]
+        elif t_type == 1:
+            # call buyoilproc procedure to add new oil transaction
+            ret = cur.callproc('selloilproc', (amount, c_id, tr_id, comm_type, ret))
+            cur.execute('select @_selloilproc_4;')
+            ret = cur.fetchall()[0][0]
+        else:
+            ret = cur.callproc('paymentproc', (amount, c_id, tr_id, ret))
+            cur.execute('select @_paymentproc_3;')
+            ret = cur.fetchall()[0][0]
+        app.logger.debug(ret)
+        mysql.connection.commit()
+        if ret >=0:
+            return {'t_id': ret}
+        elif ret == -1:
+            return {'error': 'Insufficient Authority'}
+        elif ret == -2:
+            return {'error': 'Not enough oil balance'}
+        else:
+            return {'error': 'Falied to create new transaction, contact Admin'}
 
 
 class OilTransaction(object):
@@ -196,6 +231,7 @@ class OilTransaction(object):
     attributes['t_date'] = None
     attributes['c_id']= None
     attributes['tr_id']= None
+    attributes['t_type']= None
     attributes['comm_oil']= None
     attributes['comm_cash']= None
     attributes['oil_balan']= None
@@ -273,5 +309,6 @@ class Payments(object):
                     row[i] = float(row[i])
                 dict1[attr] = row[i]
                 i = i + 1
+            dict1['t_type'] = 2
             json.append(dict1)
         return json

@@ -19,6 +19,8 @@
     <script src="js/sigrdrifa.js"></script>
     <script src="js/login.js"></script>
     <script src="js/core_client.js"></script>
+    <script src="js/core_trader.js"></script>
+    <script src="js/pagination.js"></script>
     <title>
       Sigrdrifa
     </title>
@@ -35,6 +37,26 @@
       </a>
     </nav>
     <div class="container fill">
+    </div>
+    <!-- Modal for show result-->
+    <div class="modal fade" id="result_modal" tabindex="-1" role="dialog" aria-labelledby="result_modal_label" aria-hidden="true">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="result_modal_label"></h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <div class="alert alert-dismissable">
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+          </div>
+        </div>
+      </div>
     </div>
   </body>
 

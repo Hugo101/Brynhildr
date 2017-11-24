@@ -44,10 +44,19 @@ html, body {
 
 /* transparent extent for listgroup */
 .table-transparent {
-    filter:alpha(opacity=70);
-    -moz-opacity:0.7;
-    -khtml-opacity: 0.7;
-    opacity: 0.7;
+    filter:alpha(opacity=80);
+    -moz-opacity:0.8;
+    -khtml-opacity: 0.8;
+    opacity: 0.8;
+}
+
+/* transparent extent for listgroup */
+.pagination-transparent {
+    filter:alpha(opacity=90);
+    -moz-opacity:0.9;
+    -khtml-opacity: 0.9;
+    opacity: 0.9;
+    backgroud-color: #868e96;
 }
 
 /* row padding top */
@@ -58,4 +67,10 @@ html, body {
 /* hidden class */
 .hiddencls {
     display: none;
+}
+
+/* scroll list for clients */
+.list-group-scroll {
+    max-height: 300;
+    overflow: scroll;
 }
