@@ -17,8 +17,9 @@ A repository for team project of CS6360
 ## Front End
 * Use bootstrap and jQuery for development
 * Use blueimp's JavaScript-MD5 for frontend encryption:
-
 https://github.com/blueimp/JavaScript-MD5
+* Use Xdan's jQuery-datetimepicker:
+https://github.com/xdan/datetimepicker
 
 ## Back End
 Use some extension of Flask for development, includes:

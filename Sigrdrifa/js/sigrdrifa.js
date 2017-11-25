@@ -34,8 +34,7 @@ function getnow(off_m){
   if(m==0){m=12;}
   var H = now.getHours();
   var M = now.getMinutes();
-  var S =now.getSeconds();
-  return y + '-' + m + '-' + d + ' ' + H + ':' + M + ':' + S;
+  return y + '-' + m + '-' + d + ' ' + H + ':' + M;
 }
 
 // waif function
@@ -49,6 +48,11 @@ function udef(c){
   return c==undefined?'':c;
 }
 
+// transfer null to '0'
+function dnull(c){
+  return c==null?'0':c;
+}
+
 // load core htmls depends on user type
 function load_core_htmls(){
   switch(user['type'])
@@ -60,7 +64,7 @@ function load_core_htmls(){
     get_clients();
     break;
   case 2:
-    get_agg();
+    get_agg(1);
     break;
   default:
     break;
@@ -153,7 +157,7 @@ function get_clients(){
 
 /* get aggregate information
  for manager user default a month before now */
-function get_agg(){
+function get_agg(reload){
   $.ajax({
     url: restful_urls['agg'],
     /* safari support*/
@@ -164,18 +168,20 @@ function get_agg(){
     //   'Authorization': 'Iceland ' + Cookies.get('token'),
     // },
     data: {
-      'dat1' : dat[0],
-      'dat2' : dat[1],
+      'dat1' : dat[0] + ':00',
+      'dat2' : dat[1] + ':00',
     },
     beforeSend : function( xhr ) {
       xhr.setRequestHeader( 'Authorization', 'Iceland ' + Cookies.get('token') );
     },
   }).then(function(data){
-    console.log(data);
     agg = $.parseJSON(data);
-    console.log(agg);
-    $(".container").load("htmls/core_manager.html",
-                         function(){core_manager_onload();});
+    if(reload!=0){
+      $(".container").load("htmls/core_manager.html",
+                           function(){core_manager_onload();});
+    }{
+      load_aggregation();
+    }
   }, function(){
     Cookies.remove("token");
     $(".container").load("htmls/login.html", function(){$('.btn').click(function(){signin();})});
