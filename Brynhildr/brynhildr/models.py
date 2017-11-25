@@ -3,7 +3,7 @@ from .query import Queries
 from .brynhildr import mysql, app
 from datetime import date, datetime
 from flask import g
-from .utils import parse_emailaddr, parse_int
+from .utils import parse_emailaddr, parse_int, parse_datetime
 from decimal import Decimal
 
 class User(object):
@@ -311,4 +311,43 @@ class Payments(object):
                 i = i + 1
             dict1['t_type'] = 2
             json.append(dict1)
+        return json
+
+
+class Aggregation(object):
+    '''model for aggregation information retrieval for manager'''
+    attributes = {}
+    relation = 'payments'
+    attributes['buy'] = None
+    attributes['sell'] = None
+    attributes['total_oil'] = None
+    attributes['total_cash'] = None
+    attributes['total_comm_oil'] = None
+    attributes['total_comm_cash'] = None
+    attributes['total_payment'] = None
+
+    @staticmethod
+    def fetch(args):
+        cur = mysql.connection.cursor()
+        ret = 0
+        cur.callproc('searchmanager',(g.id, ret,))
+        cur.execute('select @_searchmanager_1;')
+        ret = cur.fetchall()[0][0]
+        if ret == 0:
+            return {'error': 'Insufficient Authority'}
+        dat1 = parse_datetime(args['dat1'])
+        dat2 = parse_datetime(args['dat2'])
+        cur.callproc('aggproc',(dat1,dat2,ret,ret,ret,ret,ret,ret,ret,))
+        cur.execute('select @_aggproc_2,@_aggproc_3,@_aggproc_4,@_aggproc_5,@_aggproc_6,@_aggproc_7,@_aggproc_8;')
+        row = cur.fetchall()[0]
+        json = []
+        row = list(row)
+        dict1 = {}
+        i = 0
+        for attr in Aggregation.attributes:
+            if isinstance(row[i], Decimal):
+                row[i] = float(row[i])
+            dict1[attr] = row[i]
+            i = i + 1
+        json.append(dict1)
         return json

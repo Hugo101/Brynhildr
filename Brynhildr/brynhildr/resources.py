@@ -4,6 +4,7 @@ from flask_restful import reqparse, abort, Resource
 from .models import Client as mClient
 from .models import Transaction as mTransaction
 from .models import User as mUser
+from .models import Aggregation
 from .brynhildr import api, app, auth
 from .auth import generate_token
 import json, jsonify
@@ -18,6 +19,17 @@ errors = {
         'status': 409,
     },
 }
+
+class Agg(Resource):
+    @auth.login_required
+    def get(self):
+        parser = reqparse.RequestParser()
+        parser.add_argument('dat1', type=str)
+        parser.add_argument('dat2', type=str)
+        args = parser.parse_args(strict=True)
+        args['uid'] = g.id
+        return json.dumps(Aggregation.fetch(args))
+
 
 class Transactions(Resource):
     @auth.login_required

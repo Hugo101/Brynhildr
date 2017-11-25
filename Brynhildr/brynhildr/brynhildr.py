@@ -37,3 +37,4 @@ api.add_resource(resources.Transactions , '/api/transactions', endpoint='transac
 api.add_resource(resources.Login , '/api/login', endpoint='login')
 # all clients api
 api.add_resource(resources.Clients , '/api/clients', endpoint='clients')
+api.add_resource(resources.Agg , '/api/agg', endpoint='agg')

@@ -5,13 +5,16 @@ restful_urls['login'] = server_host + '/login';
 restful_urls['client'] = server_host + '/client';
 restful_urls['clients'] = server_host + '/clients';
 restful_urls['user'] = server_host + '/user';
+restful_urls['agg'] = server_host + '/agg';
 restful_urls['transactions'] = server_host + '/transactions';
 var user = {};
 var client = {};
 var clients = {};
 var transactions = {};
+var agg = {};
 var current_price = 35;
 var rate = [0.0002,0.0015];
+var dat = [getnow(0), getnow(1)]
 // var url = new URL(location.href);
 // var pageid = url.searchParams.get("pageid");
 // if(pageid == undefined || pageid == null){
@@ -19,6 +22,21 @@ var rate = [0.0002,0.0015];
 // }
 var pageid = 1;
 console.log(pageid);
+
+// get now datetime
+function getnow(off_m){
+  var now = new Date();
+  var d = now.getDate();
+  var y = now.getFullYear();
+  var m = now.getMonth() + off_m;
+  y += (Math.ceil(m/12)-1);
+  m = m%12;
+  if(m==0){m=12;}
+  var H = now.getHours();
+  var M = now.getMinutes();
+  var S =now.getSeconds();
+  return y + '-' + m + '-' + d + ' ' + H + ':' + M + ':' + S;
+}
 
 // waif function
 function wait(ms){
@@ -42,6 +60,7 @@ function load_core_htmls(){
     get_clients();
     break;
   case 2:
+    get_agg();
     break;
   default:
     break;
@@ -132,6 +151,37 @@ function get_clients(){
   });
 }
 
+/* get aggregate information
+ for manager user default a month before now */
+function get_agg(){
+  $.ajax({
+    url: restful_urls['agg'],
+    /* safari support*/
+    cache: true,
+    // async: false,
+    method: 'GET',
+    // headers: {
+    //   'Authorization': 'Iceland ' + Cookies.get('token'),
+    // },
+    data: {
+      'dat1' : dat[0],
+      'dat2' : dat[1],
+    },
+    beforeSend : function( xhr ) {
+      xhr.setRequestHeader( 'Authorization', 'Iceland ' + Cookies.get('token') );
+    },
+  }).then(function(data){
+    console.log(data);
+    agg = $.parseJSON(data);
+    console.log(agg);
+    $(".container").load("htmls/core_manager.html",
+                         function(){core_manager_onload();});
+  }, function(){
+    Cookies.remove("token");
+    $(".container").load("htmls/login.html", function(){$('.btn').click(function(){signin();})});
+  });
+}
+
 /* clear transactions */
 function clear_transactions(){
   $(".table#id_transactions tbody").text('');
@@ -150,6 +200,9 @@ function load_transactions(){
       break;
     case 2:
       trclass = 'table-success';
+      break;
+    case 3:
+      trclass = 'table-danger';
       break;
     default:
       break;
