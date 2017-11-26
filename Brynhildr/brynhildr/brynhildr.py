@@ -33,6 +33,8 @@ api.add_resource(resources.Client , '/api/client', endpoint='client')
 api.add_resource(resources.User , '/api/user', endpoint='user')
 # get transactions
 api.add_resource(resources.Transactions , '/api/transactions', endpoint='transactions')
+# cancel transactions
+api.add_resource(resources.Transaction , '/api/transaction', endpoint='transaction')
 # login
 api.add_resource(resources.Login , '/api/login', endpoint='login')
 # all clients api

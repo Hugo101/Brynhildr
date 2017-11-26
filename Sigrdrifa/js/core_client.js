@@ -8,12 +8,7 @@ function core_client_onload(){
   $('div.modal#new_payment_modal').find('.btn-primary').attr('disabled', true);
   $('div.modal#new_payment_modal').find('.btn-primary').on('click', function(){submit_new_payment_modal();});
   $(".glyphicon-log-out").parent().show();
-  $("#id_welcome").text('Welcome ' + client.first_name + ' ' + client.last_name);
-  $("#h6_first_name").text(client.first_name);
-  for(var attr in client){
-    var dom_content = "<div class='list-group-item list-group-item-light flex-column align-items'><div class='d-flex w-100 justify-content-between'><h6 class='mb-1'>" + attr.toUpperCase() + ":</h6><h6 class='mb-1' id='h6_" + attr + "'>" + client[attr] + "</h6></div></div>";
-    $(".list-group#id_clientinfo").append(dom_content);
-  }
+  load_client();
   $("input#transaction_amount").on('input', function(){
     show_transaction_cash();
   });
@@ -29,6 +24,16 @@ function core_client_onload(){
     new_payment_handler();
   });
   get_transactions();
+}
+
+function load_client(){
+  $(".list-group#id_clientinfo").find('.align-items').remove();
+  $("#id_welcome").text('Welcome ' + client.first_name + ' ' + client.last_name);
+  $("#h6_first_name").text(client.first_name);
+  for(var attr in client){
+    var dom_content = "<div class='list-group-item list-group-item-light flex-column align-items'><div class='d-flex w-100 justify-content-between'><h6 class='mb-1'>" + attr.toUpperCase() + ":</h6><h6 class='mb-1' id='h6_" + attr + "'>" + client[attr] + "</h6></div></div>";
+    $(".list-group#id_clientinfo").append(dom_content);
+  }
 }
 
 function show_transaction_cash(){

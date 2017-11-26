@@ -223,6 +223,23 @@ class Transaction(object):
             return {'error': 'Falied to create new transaction, contact Admin'}
 
 
+    @staticmethod
+    def cancel(args):
+        for attr in args:
+            if attr == 'uid':
+                # check uid is a valid Integer, sql injection prevention
+                cur = mysql.connection.cursor()
+                ret = 0
+                tid = args['t_id']
+                ret = cur.callproc('cancelproc', (tid, g.id, ret,))
+                cur.execute('select @_cancelproc_2;')
+                ret = cur.fetchall()[0][0]
+                if ret == -2:
+                    return {'error': 'unexisted transaction'}
+                if ret == -1:
+                    return {'error': 'Insufficient authority'}
+                return {'success': 'transaction canceled'}
+
 class OilTransaction(object):
     ''' model for Client'''
     attributes = {}

@@ -26,6 +26,7 @@ function pagination(){
   $($page_items[$page_items.length-1]).addClass('disabled');
   var num_xacts = transactions.length;
   var num_pages = Math.ceil(num_xacts / 10);
+  if(num_pages==0){num_pages+=1;}
   var i = 0;
   if(num_pages > 5){
     if($page_items.length <7){

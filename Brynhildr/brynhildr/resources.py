@@ -56,6 +56,15 @@ class Transactions(Resource):
         return json.dumps(mTransaction.new(args))
 
 
+class Transaction(Resource):
+    @auth.login_required
+    def get(self):
+        parser = reqparse.RequestParser()
+        parser.add_argument('t_id', type=int)
+        args = parser.parse_args(strict=True)
+        args['uid'] = g.id
+        return json.dumps(mTransaction.cancel(args))
+
 
 class Clients(Resource):
     '''test resource, get all clients'''

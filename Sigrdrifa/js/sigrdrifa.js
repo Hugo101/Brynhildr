@@ -7,6 +7,7 @@ restful_urls['clients'] = server_host + '/clients';
 restful_urls['user'] = server_host + '/user';
 restful_urls['agg'] = server_host + '/agg';
 restful_urls['transactions'] = server_host + '/transactions';
+restful_urls['transaction'] = server_host + '/transaction';
 var user = {};
 var client = {};
 var clients = {};
@@ -58,10 +59,10 @@ function load_core_htmls(){
   switch(user['type'])
   {
   case 0:
-    get_client();
+    get_client(1);
     break;
   case 1:
-    get_clients();
+    get_clients(1);
     break;
   case 2:
     get_agg(1);
@@ -100,7 +101,7 @@ function is_login(){
 }
 
 /* get client info */
-function get_client(){
+function get_client(reload){
   $.ajax({
     url: restful_urls['client'],
     /* safari support*/
@@ -120,8 +121,12 @@ function get_client(){
     for(var cld in data[0]){
       client[cld] = data[0][cld];
     }
+    if(reload!=0){
     $(".container").load("htmls/core_client.html",
                          function(){core_client_onload();});
+    }else{
+      load_client();
+    }
   }, function(){
     Cookies.remove("token");
     $(".container").load("htmls/login.html", function(){$('.btn').click(function(){signin();})});
@@ -130,7 +135,7 @@ function get_client(){
 
 /* get clients info
  for trader user */
-function get_clients(){
+function get_clients(reload){
   $.ajax({
     url: restful_urls['clients'],
     /* safari support*/
@@ -147,8 +152,12 @@ function get_clients(){
     console.log(data);
     clients = $.parseJSON(data);
     console.log(clients);
-    $(".container").load("htmls/core_trader.html",
-                         function(){core_trader_onload();});
+    if(reload!=0){
+      $(".container").load("htmls/core_trader.html",
+                           function(){core_trader_onload();});
+    }else{
+      t_reload_client_info();
+    }
   }, function(){
     Cookies.remove("token");
     $(".container").load("htmls/login.html", function(){$('.btn').click(function(){signin();})});
@@ -222,10 +231,19 @@ function load_transactions(){
     dom_content += '<td>' + udef(transactions[idx]['comm_oil']) + '</td>';
     dom_content += '<td>' + udef(transactions[idx]['comm_cash']) + '</td>';
     dom_content += '<td>' + udef(transactions[idx]['oil_balan']) + '</td>';
+//    dom_content += '<td>' + transactions[idx]['cash_balan'] + "<button type='button' class='btn btn-secondary btn-sm' id='id_cancel_" + transactions[idx]['t_id'] + "'>cancel</button></td>";
     dom_content += '<td>' + transactions[idx]['cash_balan'] + '</td>';
+    if(user['type']==1){
+      dom_content += "<td><button type='button' class='btn btn-secondary btn-sm' id='id_cancel_" + transactions[idx]['t_id'] + "'>cancel</button></td>";
+    }
     dom_content += '</tr>';
     $(".table#id_transactions tbody").append(dom_content);
   }
+  $(".table#id_transactions tbody").find('.btn-secondary').on('click', function(){
+    var tid = $(this).attr('id');
+    tid = tid.slice(10,tid.length);
+    cancel_transaction(tid);
+  });
 }
 
 /* get transactions */
@@ -286,9 +304,43 @@ function new_transaction(t_data){
   });
 }
 
+/* cancel transaction, only use by traders */
+function cancel_transaction(tid){
+    $.ajax({
+    url: restful_urls['transaction'],
+    /* safari support*/
+    cache: true,
+    // async: falss,
+    method: 'GET',
+    // headers: {
+    //   'Authorization': 'Iceland ' + Cookies.get('token'),
+    // },
+    data: {
+      't_id': tid,
+    },
+    beforeSend : function( xhr ) {
+      xhr.setRequestHeader( 'Authorization', 'Iceland ' + Cookies.get('token') );
+    },
+  }).then(function(data){
+    console.log(data);
+    var data = $.parseJSON(data);
+    console.log(data);
+    show_result(data);
+  }, function(e, text){
+    console.log(e.status);
+    console.log(e.statusText);
+    console.log(e.responseText);
+    show_result($.parseJson(responseText));
+    console.log(text);
+  });
+}
+
+
 /* function for deal with result response with result modal */
 function show_result(data){
   $('#result_modal').on('hide.bs.modal', function(){
+    get_client(0);
+    get_clients(0);
     get_transactions();
     pagination();
     load_transactions();
@@ -297,7 +349,7 @@ function show_result(data){
   $alert = $('#result_modal').find('.alert');
   $alert.removeClass('alert-danger');
   $alert.removeClass('alert-success');
-  if(data['t_id']!=undefined){
+  if(data['t_id']!=undefined || data['success']!=undefined){
     $title.text('Success');
     $alert.addClass('alert-success');
     $alert.text('Transaction submitted successfully');

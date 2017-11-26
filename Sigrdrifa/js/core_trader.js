@@ -30,6 +30,10 @@ function core_trader_onload(){
   $("input#payment_amount").on('input', function(){
     t_new_payment_handler();
   });
+  /* add a cancel field in title row of transactions */
+  if(user['type']==1){
+    $('thead tr.table-primary').append('<th></th>');
+  }
   load_client_list();
 }
 
