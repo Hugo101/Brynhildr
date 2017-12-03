@@ -15,7 +15,7 @@ var transactions = {};
 var agg = {};
 var current_price = 35;
 var rate = [0.0002,0.0015];
-var dat = [getnow(0), getnow(1)]
+var dat = [getnow(0), getnow(1)];
 // var url = new URL(location.href);
 // var pageid = url.searchParams.get("pageid");
 // if(pageid == undefined || pageid == null){
@@ -93,11 +93,21 @@ function is_login(){
     for(var cld in data[0]){
       user[cld] = data[0][cld];
     }
+    current_price = data[data.length-1]['cprice'];
+    rate = [data[data.length-1]['silver'], data[data.length-1]['gold']];
+    navbarinfo();
     load_core_htmls();
   }, function(){
     Cookies.remove("token");
     $(".container").load("htmls/login.html", function(){$('.btn').click(function(){signin();})});
   });
+}
+
+/* load oil price and commission rate*/
+function navbarinfo(){
+  $e = $('.navbar').find('.navbar-text');
+  $($e[0]).text('Current Oil Price (USD/Barrel): ' + current_price);
+  $($e[1]).text('Current Commission Rate: [Silver:' + rate[0] + ', Gold:' + rate[1] + ']');
 }
 
 /* get client info */

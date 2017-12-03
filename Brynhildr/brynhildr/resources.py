@@ -94,7 +94,8 @@ class User(Resource):
         args['uid'] = g.id
         result = mUser.fetch(args)
         for u in result:
-            u.pop('pw')
+            if u.get('pw') is not None:
+                u.pop('pw')
         return json.dumps(result)
 
 

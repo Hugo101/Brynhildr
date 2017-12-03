@@ -58,6 +58,16 @@ class User(object):
                 dict1[attr] = row[i]
                 i = i + 1
             json.append(dict1)
+        if len(json) != 0:
+            sql = Queries.query_curprice
+            app.logger.debug(sql)
+            cur.execute(sql)
+            results1 = cur.fetchall()
+            sql = Queries.query_crates
+            app.logger.debug(sql)
+            cur.execute(sql)
+            results2 = cur.fetchall()
+            json.append({'cprice':float(results1[0][0]), 'silver':float(results2[0][0]), 'gold':float(results2[0][1])})
         return json
 
 
