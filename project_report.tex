@@ -5,7 +5,7 @@
 \setlength{\parskip}{2pt}
 \usepackage{tikz,mathpazo}
 \usepackage{amsmath, mathtools, textcomp}
-\usetikzlibrary{shapes.geometric, shapes, arrows, snakes}
+\usetikzlibrary{shapes.geometric, shapes, arrows, snakes, positioning, arrows.meta}
 \usepackage{graphicx}
 \usepackage{multirow}
 \begin{document}
@@ -17,7 +17,7 @@
   \node (#1) [#2, xshift=#4-0pt, yshift=#5-0pt] {\scriptsize #3};
 }
 \newcommand{\tnanode}[7]{
-  \node (#1) [#2, xshift=#4-0pt, yshift=#5-0pt, #6 of= #7] {\scriptsize #3};
+  \node (#1) [#2, xshift=#4-0pt, yshift=#5-0pt, #6 = of #7] {\scriptsize #3};
 }
 \newcommand{\tline}[3]{
   \draw [#3] (#1) -- (#2);
@@ -27,92 +27,170 @@
 {\par\noindent%
   \ignorespacesafterend}
 
+\clearpage
 \begin{mypara}
-  \textbf{1. ER Diagrams}
+  \textbf{Appendix A: ER Diagram}
+  \vspace{0.2cm}
   \par\noindent\ignorespaces
-\begin{tikzpicture}[node distance=65pt]
-  % client entity
-  \tnode {clients}{rectangle1}{Clients}{}{}
-  \tnanode {cid}{circle1}{\underline{c\_id}}{-15}{}{left}{clients}
-  \tnanode {pw}{circle1}{pw}{-21}{21}{below left}{clients}
-  \tnanode {firstname}{circle1}{first\_name}{-21}{-21}{above left}{clients}
-  \tnanode {lastname}{circle1}{last\_name}{8}{}{above left}{clients}
-  \tnanode {pnum}{circle1}{p\_num}{}{-2}{above}{clients}
-  \tnanode {cpnum}{circle1}{cp\_num}{-8}{}{above right}{clients}
-  \tnanode {email}{circle1}{email}{21}{-21}{above right}{clients}
-  \tnanode {level}{circle1}{level}{15}{}{right}{clients}
-  \tnanode {street}{circle1}{street}{8}{}{below left}{clients}
-  \tnanode {city}{circle1}{city}{-8}{}{below right}{clients}
-  \tnanode {state}{circle1}{state}{21}{21}{below right}{clients}
-  \tnanode {zipcode}{circle1}{zipcode}{15}{}{right}{clients}
+  \begin{center}
+    \begin{tikzpicture}[auto, node distance=15pt]
 
-  \tline{clients}{cid}{}
-  \tline{clients}{pw}{}
-  \tline{clients}{firstname}{}
-  \tline{clients}{lastname}{}
-  \tline{clients}{pnum}{}
-  \tline{clients}{cpnum}{}
-  \tline{clients}{email}{}
-  \tline{clients}{level}{}
+      % user entity
+      \tnode {users}{rectangle1}{Users}{}{}
+      \tnanode {uid}{circle1}{\underline{uid}}{}{}{left}{users}
+      \tnanode {pw}{circle1}{password}{}{}{below left}{users}
+      \tnanode {type}{circle1}{type}{}{}{below right}{users}
+      \tnanode {email}{circle1}{email}{}{}{right}{users}
 
-  \tline{clients}{street}{}
-  \tline{clients}{city}{}
-  \tline{clients}{state}{}
-  \tline{clients}{zipcode}{}
+      \tline{users}{uid}{}
+      \tline{users}{pw}{}
+      \tline{users}{email}{}
+      \tline{users}{type}{}
 
-  % % addr_in relationship
+      % isa relations between users and (clients, traders)
+      \tnanode {isa1}{triangle1}{ISA}{}{}{below}{users}
+      \tline{users}{isa1}{}
 
-  % \tnanode {addrin}{diamond1}{Addr\_in}{}{20}{below}{clients}
-  % \tline{clients}{addrin}{ultra thick, ->}
+      % client entity
+      \tnanode {clients}{rectangle1}{Clients}{-75}{-40}{below left}{isa1}
+      \tnanode {firstname}{circle1}{first\_name}{12}{11}{above left}{clients}
+      \tnanode {oilbalan}{circle1}{oil\_balan}{-15}{-10}{above left}{clients}
+      \tnanode {lastname}{circle1}{last\_name}{}{12}{above}{clients}
+      \tnanode {cpnum}{circle1}{cellph\_num}{}{}{left}{clients}
+      \tnanode {pnum}{circle1}{phone\_num}{12}{-12}{below left}{clients}
+      \tnanode {cashbalan}{circle1}{cash\_balan}{-15}{10}{below left}{clients}
+      \tnanode {street}{circle1}{street}{}{-13}{below right}{clients}
+      \tnanode {city}{circle1}{city}{10}{10}{below right}{clients}
+      \tnanode {state}{circle1}{state}{-2}{}{right}{clients}
+      \tnanode {zipcode}{circle1}{zip\_code}{10}{-10}{above right}{clients}
+      \tnanode {level}{circle1}{level}{28}{-22}{below}{clients}
 
-  % % addresses entity
-  % \tnanode {addresses}{rectangle1}{Addresses}{}{-10}{below}{addrin}
-  % \tnanode {aid}{circle1}{\underline{a\_id}}{-15}{}{left}{addresses}
-  % \tnanode {street}{circle1}{street}{-21}{-21}{above left}{addresses}
-  % \tnanode {city}{circle1}{city}{14}{}{above left}{addresses}
-  % \tnanode {state}{circle1}{state}{21}{-21}{above right}{addresses}
-  % \tnanode {zipcode}{circle1}{zipcode}{15}{}{right}{addresses}
-  % \tline{addresses}{aid}{}
-  % \tline{addresses}{street}{}
-  % \tline{addresses}{city}{}
-  % \tline{addresses}{state}{}
-  % \tline{addresses}{zipcode}{}
-  % \tline{addrin}{addresses}{ultra thick, <-}
-
-  % client_trans relationship
-
-  \tnanode {clienttrans}{diamond1}{Client\_trans}{}{-5}{below}{clients}
-  % \tline{35pt, -15pt}{184pt,-45pt}{}
-  \tline{clients}{clienttrans}{}
+      \tline{isa1}{clients}{}
+      \tline{clients}{firstname}{}
+      \tline{clients}{lastname}{}
+      \tline{clients}{pnum}{}
+      \tline{clients}{cpnum}{}
+      \tline{clients}{level}{}
+      \tline{clients}{street}{}
+      \tline{clients}{city}{}
+      \tline{clients}{state}{}
+      \tline{clients}{zipcode}{}
+      \tline{clients}{cashbalan}{}
+      \tline{clients}{oilbalan}{}
 
 
-  % transactions
-  \tnanode {transactions}{rectangle1}{Transactions}{}{-10}{below}{clienttrans}
-  \tnanode {tid}{circle1}{\underline{t\_id}}{-15}{}{left}{transactions}
-  \tnanode {value}{circle1}{value}{-21}{-21}{above left}{transactions}
-  \tnanode {tdate}{circle1}{t\_date}{5}{5}{above left}{transactions}
-  \tnanode {commission}{circle1}{commission}{-5}{5}{above right}{transactions}
-  \tnanode {balanceoil}{circle1}{balance\_oil}{21}{-21}{above right}{transactions}
-  \tnanode {balance}{circle1}{balance}{15}{}{right}{transactions}
-  \tline{transactions}{tid}{}
-  \tline{transactions}{value}{}
-  \tline{transactions}{tdate}{}
-  \tline{transactions}{commission}{}
-  \tline{transactions}{balanceoil}{}
-  \tline{transactions}{balance}{}
-  \tline{clienttrans}{transactions}{ultra thick, <-}
+      % traders
+      \tnanode {traders}{rectangle1}{Traders}{}{-35}{below}{isa1}
+      \tnanode {tradername}{circle1}{trader\_name}{-20}{}{below right}{traders}
+      \tline{traders}{tradername}{}
+      \tline{isa1}{traders}{}
 
-  % isa payment
-  \tnanode {isa1}{triangle1}{ISA}{}{}{below}{transactions}
-  \tline{transactions}{isa1}{}
+      % managers
+      \tnanode {managers}{rectangle1}{Managers}{40}{-40}{below right}{isa1}
+      \tline{isa1}{managers}{}
 
-  % payments
-  \tnanode {payments}{rectangle1}{Payments}{}{20}{below}{isa1}
-  \tnanode {amountpaid}{circle1}{amount\_paid}{-15}{}{left}{payments}
-  \tnanode {traderinfo}{circle1}{trader\_info}{15}{}{right}{payments}
-  \tline{payments}{amountpaid}{}
-  \tline{payments}{traderinfo}{}
-  \tline{isa1}{payments}{}
-\end{tikzpicture}
+      % clients_trans
+
+      \tnanode {clienttrans}{diamond1}{Clients\_trans}{}{-38}{below}{clients}
+      % \tline{35pt, -15pt}{184pt,-45pt}{}
+      \tline{clients}{clienttrans}{}
+
+      % traders_trans
+
+      \tnanode {tradertrans}{diamond1}{Traders\_trans}{}{-98}{below}{traders}
+      \tline{traders}{tradertrans}{}
+
+
+      % transactions
+      \tnanode {transactions}{rectangle1}{Transactions}{}{-10}{below}{clienttrans}
+      \tnanode {tid}{circle1}{\underline{t\_id}}{}{}{left}{transactions}
+      \tnanode {tdate}{circle1}{t\_date}{}{}{above left}{transactions}
+      \tnanode {ttype}{circle1}{t\_type}{}{}{above right}{transactions}
+
+      \tline{transactions}{tid}{}
+      \tline{transactions}{tdate}{}
+      \tline{transactions}{ttype}{}
+      \tline{clienttrans}{transactions}{ultra thick, <-}
+      \tline{transactions}{tradertrans}{-{>[scale=1.5]}}
+
+      % isa between transactions and (oil transactions and payments)
+      \tnanode {isa2}{triangle1}{ISA}{}{}{below}{transactions}
+      \tline{transactions}{isa2}{}
+
+      % oil_transactions
+      \tnanode {oiltransactions}{rectangle1}{Oil\_transactions}{}{}{below left}{isa2}
+      \tnanode {amount}{circle1}{amount}{}{}{above}{oiltransactions}
+      \tnanode {cashbalan}{circle1}{cash\_balan}{}{}{above left}{oiltransactions}
+      \tnanode {oilbalan}{circle1}{oil\_balan}{}{}{left}{oiltransactions}
+      \tnanode {commoil}{circle1}{comm\_oil}{}{}{below left}{oiltransactions}
+      \tnanode {commcash}{circle1}{comm\_cash}{}{}{below}{oiltransactions}
+      \tnanode {commrate}{circle1}{comm\_rate}{}{}{below right}{oiltransactions}
+      \tnanode {price}{circle1}{price}{}{}{right}{oiltransactions}
+      \tline{oiltransactions}{amount}{}
+      \tline{oiltransactions}{cashbalan}{}
+      \tline{oiltransactions}{oilbalan}{}
+      \tline{oiltransactions}{commoil}{}
+      \tline{oiltransactions}{commcash}{}
+      \tline{oiltransactions}{commrate}{}
+      \tline{oiltransactions}{price}{}
+      \tline{isa2}{oiltransactions}{}
+
+      % payments
+      \tnanode {payments}{rectangle1}{Payments}{20}{}{below right}{isa2}
+      \tnanode {amount}{circle1}{amount}{}{}{above right}{payments}
+      \tnanode {cashbalan}{circle1}{cashbalan}{}{}{right}{payments}
+      \tline{payments}{amount}{}
+      \tline{payments}{cashbalan}{}
+      \tline{isa2}{payments}{}
+
+      % cancel logs
+      \tnanode {cancellogs}{rectangle1}{Cancel\_logs}{20}{-80}{below}{oiltransactions}
+      \tnanode {lid}{circle1}{\underline{l\_id}}{12}{11}{above left}{cancellogs}
+      \tnanode {cdate}{circle1}{c\_date}{-15}{-10}{above left}{cancellogs}
+      \tnanode {tdate}{circle1}{t\_date}{-5}{12}{above}{cancellogs}
+      \tnanode {tid}{circle1}{t\_id}{45}{8}{above}{cancellogs}
+      \tnanode {cid}{circle1}{c\_id}{-16}{-14}{below left}{cancellogs}
+      \tnanode {trid}{circle1}{tr\_id}{6}{-7}{below right}{cancellogs}
+      \tnanode {ttype}{circle1}{t\_type}{10}{16}{below right}{cancellogs}
+      \tnanode {commoil}{circle1}{comm\_oil}{-2}{6}{right}{cancellogs}
+      \tnanode {commcash}{circle1}{comm\_cash}{6}{-4}{above right}{cancellogs}
+      \tnanode {price}{circle1}{price}{56}{-22}{below}{cancellogs}
+      \tnanode {cashbalan}{circle1}{cash\_balan}{-15}{10}{below left}{cancellogs}
+      \tnanode {oilbalan}{circle1}{oil\_balan}{-10}{}{left}{cancellogs}
+      \tnanode {commrate}{circle1}{comm\_rate}{}{-30}{below}{cancellogs}
+      \tnanode {amount}{circle1}{amount}{-57}{-27}{below}{cancellogs}
+      \tline{cancellogs}{amount}{}
+      \tline{cancellogs}{lid}{}
+      \tline{cancellogs}{cdate}{}
+      \tline{cancellogs}{tdate}{}
+      \tline{cancellogs}{tid}{}
+      \tline{cancellogs}{cid}{}
+      \tline{cancellogs}{trid}{}
+      \tline{cancellogs}{ttype}{}
+      \tline{cancellogs}{commoil}{}
+      \tline{cancellogs}{commcash}{}
+      \tline{cancellogs}{price}{}
+      \tline{cancellogs}{cashbalan}{}
+      \tline{cancellogs}{oilbalan}{}
+      \tline{cancellogs}{commrate}{}
+
+      % oil prices
+      \tnanode {oilprices}{rectangle1}{Oilprices}{70}{}{above right}{cancellogs}
+      \tnanode {pricedate}{circle1}{\underline{price\_date}}{}{}{above}{oilprices}
+      \tnanode {price}{circle1}{price}{}{}{above right}{oilprices}
+      \tline{oilprices}{pricedate}{}
+      \tline{oilprices}{price}{}
+
+      % comm rate
+      \tnanode {commrates}{rectangle1}{Comm\_rates}{70}{}{below right}{cancellogs}
+      \tnanode {ratedate}{circle1}{\underline{rate\_date}}{}{}{above}{commrates}
+      \tnanode {ratesilver}{circle1}{rate\_silver}{}{}{above right}{commrates}
+      \tnanode {rategold}{circle1}{rate\_gold}{}{}{right}{commrates}
+      \tline{commrates}{ratedate}{}
+      \tline{commrates}{ratesilver}{}
+      \tline{commrates}{rategold}{}
+
+    \end{tikzpicture}
+  \end{center}
 \end{mypara}
 \end{document}
