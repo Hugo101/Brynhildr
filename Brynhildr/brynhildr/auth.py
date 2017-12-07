@@ -3,6 +3,7 @@ from flask import g
 from .brynhildr import auth, jwt, app
 
 def generate_token(uid):
+    '''generate token for an legal user'''
     token = jwt.dumps({'uid': uid})
     return token
 

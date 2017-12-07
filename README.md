@@ -31,11 +31,11 @@ Use some extension of Flask for development, includes:
 
 ## Deploy Manual
 
-Require Python 3.6.3 installed
+Require Python 3.6.3 and MySQL 5.7 installed
 
-* Unix&Linux: ```runserver.sh```
-* Windows:    ```checkpython.bat
-runserver.bat```
+* Unix&Linux: ```./init_db.sh ; ./runserver.sh```
+* Windows:    ```checkpython.bat; runserver.bat```
 
 ## License
 * MIT License
+

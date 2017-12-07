@@ -8,9 +8,11 @@
 \usetikzlibrary{shapes.geometric, shapes, arrows, snakes, positioning, arrows.meta}
 \usepackage{graphicx}
 \usepackage{multirow}
+\usepackage{array}
 \begin{document}
 \tikzstyle{circle1} = [ellipse, rounded corners, minimum width=50pt, minimum height=23pt, text centered, draw=black, fill=white]
 \tikzstyle{rectangle1} = [rectangle, minimum width=70pt, minimum height=30pt,text centered, text width=50pt, draw=black, fill=white]
+\tikzstyle{rectangle2} = [rectangle, minimum width=70pt, minimum height=30pt,text centered, text width=50pt, fill=white]
 \tikzstyle{diamond1} = [diamond, aspect=2, minimum width=60pt, minimum height=30pt,text centered, draw=black, fill=white]
 \tikzstyle{triangle1} = [regular polygon, regular polygon sides=3, text centered, draw=black, minimum size=10pt, fill=white]
 \newcommand{\tnode}[5]{
@@ -22,11 +24,200 @@
 \newcommand{\tline}[3]{
   \draw [#3] (#1) -- (#2);
 }
+\newcommand{\tlinet}[5]{
+  \draw [#3] (#1) -- node[#5]{\scriptsize #4}(#2);
+}
+
 \newenvironment*{mypara}%
 {\noindent\ignorespaces}%
 {\par\noindent%
   \ignorespacesafterend}
+\newcolumntype{L}[1]{>{\raggedleft}p{#1}}
+\newcolumntype{C}[1]{>{\centering}p{#1}}
+\newcolumntype{R}[1]{>{\raggedright}p{#1}}
 
+\title{A Web Based Oil Transaction System\\
+\normalsize Class Project for CS6360.006}
+\author{Jiashuai Lu (Jxl173630)\\ Department of Computer Science, University of Texas at Dallas}
+\maketitle
+\clearpage
+\begin{mypara}
+  \textbf{1. Conceptual Design}
+  \par
+  Being an web based oil transaction system, according to the requirements, firstly, we at least need one entity set to store the users which can sign in this system. For this, we initiate our conceptual schema by adding an entity set \textit{Users}.
+  \par
+  Besides, this system also need we to separate users' rights between normal clients, traders, and managers, which could be a proper applicable scenario of \textit{isa} relationship. After we use an \textit{isa} relationship to capture the inheritance between users and its sub-classes, we attach all the common attributes to \textit{Users}. We use \textit{uid} as a user's primary key. By considering that use uid to login the system is inconvenient and will expose the uid, we also give every user an email attribute as a candidate key. This will be used as this user's login id for authenticating. For security, in the password attribute, we store not the plain but the encrypted text. At last, for offering different view to each kind of user, we also store the user type information in \textit{Users}.
+  \par
+  As a descendant of user, client is one of the most important entity of our system. Every transaction must be assigned a client as its owner. Also sometimes a transaction could be submitted by a trader of clients. In the requirements, this system should have three type base transactions. Two of them are buying and selling oils, and the other one is payment. After an elaborated analysis, we decide to give \textit{Clients} entity set the following attributes: \textit{first\_name}, \textit{last\_name}, and other personal information of a client as well as \textit{level}, \textit{oil\_balan}, and \textit{text\_balan} which are used to store a client's business information.
+  \par
+  Moreover, in the ER diagram in Appendix A, we also have \textit{Traders} and \textit{Managers} as \textit{Clients}' sibling entity sets to store corresponding information.
+
+  The second big part of the conceptual schema is the entity sets about transactions. Similar with the users part, we use an \textit{isa} relationship as well. In our design, every transaction, no matter oil related transaction or payment transaction, needs a transaction id for primary key, a transaction date to store when it is occurred. Furthermore, also for differentiate them, we add a type attribute in the \textit{Transactions} entity set.
+  \par
+  \textit{Clients\_trans} and \textit{Trader\_trans} are used to capture the relation between \textit{Clients} and \textit{Transactions} as well as \textit{Traders} and \textit{Transactions} respectively. We also add some constraints on these relationships according to the reality. For example, every transaction must has exactly one owner (a many to one key constraint and a participant constraint) and every transaction has at most one trader (a many to one key constraint).
+  \par
+  \textit{Oil\_transactions} is an entity set we used to express oil related transactions which have two kinds: buying and selling. For every oil transaction, a client could choose to pay for the commission with either her/his oil balance or with cash. We store commission by oil and commission by cash separately because this would make our development of the application easier. Besides, inspired by a lot of online bank system, we store the value of cash balance and oil balance after a transaction's effect in a transaction to let our customers be able to track their account information conveniently. Additionally, we store the current oil price, executed commission rate, and oil amount of this transaction as well to show the customers what is exactly happened during a transaction.
+  \par
+  Being the only method of topping up in this system, a client can use a payment transaction anytime to pay for her/his cost of some previous oil transactions. We store only amount and the cash balance after a payment in a \textit{Payment} entity.
+
+  After all, there are some entity sets which are auxiliary but not have explicit relationship with other entities. \textit{Cancel\_logs} are used to keep canceled transactions information for auditing. It is supposed to have every possible attribute of a transaction plus a log id as its primary key and a cancel date to track when this transaction is canceled.
+\end{mypara}
+\begin{mypara}
+  \textbf{2. Relational Schema}
+  \par
+  Given the ER diagram we get in the first part, we convert it to the following relational schema.
+  \par
+  \begin{center}
+    \begin{tabular}{R{\textwidth}}
+      Users(\underline{\textit{uid}: integer}, \textit{email}: string, \textit{password}: string, \textit{type}: integer)
+    \end{tabular}
+\end{center}
+  \par
+  Every children of \textit{Users} also need to have the \textit{uid} for referencing to its parent. And we do not explicitly have a sole entity set for managers, since managers do not have different attributes with users.\par
+  \begin{center}
+    \begin{tabular}{R{\textwidth}}
+      Clients(\underline{\textit{uid}: integer}, \textit{first\_name}: string, \textit{last\_name}: string, \textit{phone\_num}: string, \textit{cellph\_num}: string, \textit{state}: string, \textit{city}: string, \textit{zip\_code}: string, \textit{level}: integer, \textit{cash\_balan}: float, \textit{oil\_balan}: float)\\
+      Traders(\underline{\textit{uid}: integer}, \textit{trader\_name}: string)
+      \end{tabular}
+  \end{center}
+  \par
+  We combine the relationship \textit{clients\_trans} and \textit{traders\_trans} into the \textit{transactions} relation, but use a not null foreign key to capture one transaction has exact one client and a foreign key to capture one transaction has at most one trader.
+  \par
+  \begin{center}
+    \begin{tabular}{R{\textwidth}}
+      Clients\_trans(\underline{\textit{t\_id}: integer}, \textit{t\_date}: datetime, \textit{c\_id}: integer, \textit{tr\_id}: integer, \textit{type}: integer)\\
+      Oil\_transactions(\underline{\textit{t\_id}: integer}, \textit{comm\_oil}: float, \textit{comm\_cash}: float, \textit{oil\_balan}: float, \textit{cash\_balan}: float, \textit{comm\_rate}: float, \textit{price}: float, \textit{amount}: integer)\\
+      Payments(\underline{\textit{t\_id}: integer}, \textit{cash\_balan}: float, \textit{amount}: integer)\\
+      Comm\_rates(\underline{\textit{rate\_date}: datetime}, \textit{rate\_silver}: float, \textit{rate\_gold}: float)\\
+      Oilprices(\underline{\textit{price\_date}: datetime}, \textit{price}: float)\\
+      Cancel\_logs(\underline{\textit{l\_id}: integer}, \textit{c\_date}: datetime, \textit{t\_id}: integer, \textit{comm\_oil}: float, \textit{comm\_cash}: float, \textit{oil\_balan}: float, \textit{cash\_balan}: float, \textit{comm\_rate}: float, \textit{price}: float, \textit{amount}: integer)
+    \end{tabular}
+  \end{center}
+  \par
+\end{mypara}
+\begin{mypara}
+  \textbf{3. Software Architecture}
+  \par
+  Our system is a typical web application using MySQL 5.7 as its DBMS. We develop our backend \textit{Brynhildr} based on a very light python webapp framework, Flask, and develop our frontend \textit{Sigrdrifa} by using JavaScript mainly based on jQuery and Bootstrap which are also light framework. Figure 1 shows our system's architecture.
+  \par
+  For easing the development and increasing the efficiency of transferring content between frontend and backend as well as improving our system's security, our backend offering web services in a RESTful way (Representational state transfer). This gives our frontend the ability to require and use web services in a consistent and predefined set of stateless operations. Moreover, this architecture also ensures the privacy because the backend will check every request's authority to see if this request has enough right to go to next step.
+  \par
+  By using python3.7 as our backend development program language, we also use some extension of Flask to make our work easier. For example, we use Flask-Restful to develop our RESTful api, Flask-HttpAuth to handle authority control, Flask-MySQLdb to deal with all database operations in backend, Flask-Cors to control Cross-Origin Resource Sharing.
+  \par
+  In the frontend, besides jQuery and Bootstrap, we use blueimp's JavaScript-MD5 module for encrypting the user's password in login step. Similarly, for the manager's view for looking up aggregation information of transactions, we use Xdan's jQuery-datetimepicker for the datetime picker addon (although HTML5 mode has its own datetime type input element).
+  \par\noindent\ignorespaces
+  \begin{center}
+    \begin{tikzpicture}[auto, node distance=15pt]
+      \tnode {frame}{rectangle1, text width=200pt, text height=0.3cm, text depth=195pt, minimum height=200pt, minimum width=350pt}{Oil Transaction System}{}{}
+      \tnanode {client}{rectangle1}{Client Browser}{-100}{-65}{above}{frame}
+      \tnanode {sigrdrifa}{rectangle1, minimum width=130pt}{Frontend}{100}{-65}{above}{frame}
+      \tlinet{[yshift=3pt]client.east}{[yshift=3pt]sigrdrifa.west}{->}{request}{}
+      \tlinet{[yshift=-3pt]sigrdrifa.west}{[yshift=-3pt]client.east}{->}{response}{}
+      \tnanode {brynhildr}{rectangle1, text width=80pt, text height=0.3cm, text depth=-100pt, minimum height=120pt, minimum width=130pt}{Backend}{}{-20}{below}{sigrdrifa}
+      \tnanode {restful}{rectangle1, text width=100pt, minimum height=10pt}{RESTful API}{}{-30}{below}{sigrdrifa}
+      \tlinet{[xshift=10pt]sigrdrifa.south}{[xshift=10pt]restful.north}{->}{request}{}
+      \tlinet{[xshift=-10pt]restful.north}{[xshift=-10pt]sigrdrifa.south}{->}{json}{}
+      \tnanode {controller}{rectangle1, text width=100pt, minimum height=10pt}{Controller}{}{-12}{below}{restful}
+      \tline{restful}{controller}{<->}
+      \tnanode {model}{rectangle1, text width=100pt, minimum height=10pt}{Model}{}{-12}{below}{controller}
+      \tline{controller}{model}{<->}
+      \tnanode {mysqldb}{rectangle1, text width=50pt, minimum height=50pt}{MySQL Database}{-95}{10}{left}{model}
+      \tnanode {mysqldb1}{circle1, minimum width=70pt, minimum height=10pt}{}{}{-21}{above}{mysqldb}
+      \tnanode {mysqldb2}{circle1, minimum width=70pt, minimum height=10pt}{}{}{21}{below}{mysqldb}
+      \tline{model}{[yshift=-10pt]mysqldb.east}{<->}
+    \end{tikzpicture}\\
+    Figure 1. Software Architecture of Our System
+  \end{center}
+\end{mypara}
+\begin{mypara}
+  \textbf{4. Overview of Code}
+  \par
+  Being a restful web service backend, we only need to concentrate to implement necessary business logics and which part of data should be shown to specified type's user in the backend.
+  \par
+  With the help of several extension package we refer to in the last part, our backend code are mainly separated to 6 parts. Table 1 demonstrates their functions briefly.
+  \par\noindent\ignorespaces
+  \begin{center}
+    \begin{tabular}{|l|l|}
+      \hline
+      \textbf{File name} & \textbf{Main Function}\\
+      \hline
+      auth.py & token authentication\\
+      \hline
+      models.py & mapping to our entity sets\\
+      \hline
+      query.py & prepare statements\\
+      \hline
+      resources.py & RESTful api\\
+      \hline
+      utils.py & auxiliary methods (e.g. parse\_int)\\
+      \hline
+      brynhildr.py & initial backend process\\
+      \hline
+    \end{tabular}\\
+    \vspace{0.2cm}
+    Table 1. Backend code function
+  \end{center}
+  \par
+  For ensuring the atomicity and durability of our transactions, we use stored procedures for performing all business logical transactions. Table 2 shows some main procedures' function of our system. By the way, we also use a stored procedure to implement monthly rating level of clients. After we create a rating procedure, we use mysql's event to create a monthly schedule which will call our rating procedure on 00:00 AM of the first day every month.
+  \par\noindent\ignorespaces
+  \begin{center}
+    \begin{tabular}{|l|l|}
+      \hline
+      \textbf{Procedure} & \textbf{Main Function}\\
+      \hline
+      buyoilproc & purchase oil on specified client account\\
+      \hline
+      selloilproc & sell oil\\
+      \hline
+      paymentproc & topping up cash on a client account\\
+      \hline
+      rating\_monthly & rating every client according to last month's transactions\\
+      \hline
+      aggproc & gather aggregation information for manager's request\\
+      \hline
+      cancelproc & deal with a cancel transaction request\\
+      \hline
+    \end{tabular}\\
+    \vspace{0.2cm}
+    Table 2. Stored procedures function
+  \end{center}
+  \par
+  Move on the frontend, since our application is based on RESTful web services, we organize our frontend in only one main html. The system will load corresponding content html modules for each type of users when a user has been passed the authentication module of backend and get her/his token.
+  \par
+  If their is no valid token, the frontend will load the html module of sign in part and prompt the user to login. We use Table 3 to introduce main part of code in frondend.
+  \par\noindent\ignorespaces
+  \begin{center}
+    \begin{tabular}{|l|l|}
+      \hline
+      \textbf{File name} & \textbf{Main Function}\\
+      \hline
+      index.html & main interface\\
+      \hline
+      sigrdrifa.js & main process of frontend\\
+      \hline
+      core\_client.(html/js) & client module's interface and function\\
+      \hline
+      core\_trader.(html/js) & trader module's interface and function\\
+      \hline
+      core\_manager.(html/js) & manager module's interface and function\\
+      \hline
+      login.(html/js) & sign in method and log out\\
+      \hline
+      pagination.js & paginate transactions\\
+      \hline
+    \end{tabular}\\
+    \vspace{0.2cm}
+    Table 3. Frontend code function
+  \end{center}
+  \par
+  We also use an open source package JavaScript-MD5 for implementing encrypting the user's password in the frontend and then include the credential information into signin request.
+  \par
+  MySQL 5.7 is the DBMS we choose for our system. In the database, we create 9 tables according to our relational schema, and the create table sentences are in the sqls.txt file. Besides, all the stored procedures, triggers, events we use in our system all also included in the source code files.
+  \par
+  That is all about our web based oil transaction system. Thank you !
+  \par
+  (Appendix A is in the last page)
+\end{mypara}
 \clearpage
 \begin{mypara}
   \textbf{Appendix A: ER Diagram}
@@ -138,7 +329,7 @@
       % payments
       \tnanode {payments}{rectangle1}{Payments}{20}{}{below right}{isa2}
       \tnanode {amount}{circle1}{amount}{}{}{above right}{payments}
-      \tnanode {cashbalan}{circle1}{cashbalan}{}{}{right}{payments}
+      \tnanode {cashbalan}{circle1}{cash\_balan}{}{}{right}{payments}
       \tline{payments}{amount}{}
       \tline{payments}{cashbalan}{}
       \tline{isa2}{payments}{}

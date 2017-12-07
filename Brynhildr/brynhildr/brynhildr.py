@@ -18,7 +18,7 @@ app = Flask(__name__) #
 app.config.from_object('config') #
 mysql = MySQL(app)
 api = Api(app)
-cors = CORS(app, resources={r"/api/*": {"origins": "*"}})
+cors = CORS(app, resources={r"/api/*": {"origins": "http://localhost:8000"}})
 jwt = JWT(app.config['SECRET_KEY'], expires_in=7200)
 auth = HTTPTokenAuth('Iceland')
 
