@@ -1,4 +1,4 @@
-# Our system is super easy to deploy.
+# Our system is super easy to deploy in a unix or Linux system.
 # Firstly, make sure you have MySQL 5.7 and Python 3.6+ (with pip) installed on you system.
 # You could use following command to get the source code
 git clone https://github.com/jslu0418/Brynhildr.git
